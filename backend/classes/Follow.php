@@ -16,26 +16,26 @@ class Follow{
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // public function whoToFollow($user_id,$profileId){
-    //     $stmt=$this->pdo->prepare("SELECT * FROM `users` WHERE `user_id` !=:user_id AND `user_id` NOT IN (SELECT `receiver` FROM `follow` WHERE `sender`=:user_id) ORDER BY rand() LIMIT 3");
-    //     $stmt->bindParam(":user_id",$user_id,PDO::PARAM_INT);
-    //     $stmt->execute();
-    //     $data=$stmt->fetchALL(PDO::FETCH_OBJ);
-    //     if(!empty($data)){
-    //         foreach($data as $user){
-    //             echo ' <div class="follow-user">
-    //                     <div class="follow-user-img">
-    //                     <img src="'.url_for($user->profileImage).'" alt="'.$user->firstName.' '.$user->lastName.'">
-    //                     </div>
-    //                     <div class="follow-user-info">
-    //                     <h4><a href="'.url_for($user->username).'">'.$user->firstName.' '.$user->lastName.'</a></h4>
-    //                     <p>@'.$user->username.'</p>
-    //                     </div>
-    //                     <button class="f-btn p-btn follow-btn" data-follow="'.$user->user_id.'" data-user="'.$user_id.'">Follow</button>
-    //                 </div>';
-    //         }
-    //     }
-    // }
+    public function whoToFollow($user_id,$profileId){
+        $stmt=$this->pdo->prepare("SELECT * FROM `users` WHERE `user_id` !=:user_id AND `user_id` NOT IN (SELECT `receiver` FROM `follow` WHERE `sender`=:user_id) ORDER BY rand() LIMIT 3");
+        $stmt->bindParam(":user_id",$user_id,PDO::PARAM_INT);
+        $stmt->execute();
+        $data=$stmt->fetchALL(PDO::FETCH_OBJ);
+        if(!empty($data)){
+            foreach($data as $user){
+                echo ' <div class="follow-user">
+                        <div class="follow-user-img">
+                        <img src="'.url_for($user->profileImage).'" alt="'.$user->firstName.' '.$user->lastName.'">
+                        </div>
+                        <div class="follow-user-info">
+                        <h4><a href="'.url_for($user->username).'">'.$user->firstName.' '.$user->lastName.'</a></h4>
+                        <p>@'.$user->username.'</p>
+                        </div>
+                        <button class="f-btn p-btn follow-btn" data-follow="'.$user->user_id.'" data-user="'.$user_id.'">Follow</button>
+                    </div>';
+            }
+        }
+    }
 
 
 
@@ -59,7 +59,7 @@ class Follow{
     }
 
     public function follow($followID,$userId){
-        // $this->user->create('notification',array('notificationFor'=>$followID,'notificationFrom'=>$userId,"type"=>"follow","status"=>"0","notificationCount"=>"0","notificationOn"=>date('Y-m-d H:i:s')));
+        $this->user->create('notification',array('notificationFor'=>$followID,'notificationFrom'=>$userId,"type"=>"follow","status"=>"0","notificationCount"=>"0","notificationOn"=>date('Y-m-d H:i:s')));
         $this->user->create("follow",array("sender"=>$userId,"receiver"=>$followID,"followStatus"=>1,"followOn"=>date('Y-m-d H:i:s')));
         $this->addFollowCount($followID,$userId);
         $stmt=$this->pdo->prepare('SELECT `following`,`followers` FROM `users` LEFT JOIN `follow` ON `sender`=:user_id AND CASE WHEN `receiver`=:user_id THEN `sender`=`user_id` END WHERE `user_id`=:followID');
@@ -70,7 +70,7 @@ class Follow{
     }
 
     public function unfollow($unfollowID,$userId){
-        // $this->user->delete('notification',array('notificationFor'=>$unfollowID,'notificationFrom'=>$userId,"type"=>"follow"));
+        $this->user->delete('notification',array('notificationFor'=>$unfollowID,'notificationFrom'=>$userId,"type"=>"follow"));
         $this->user->delete("follow",array("sender"=>$userId,"receiver"=>$unfollowID,"followStatus"=>1));
         $this->removeFollowCount($unfollowID,$userId);
         $stmt=$this->pdo->prepare('SELECT `following`,`followers` FROM `users` LEFT JOIN `follow` ON `sender`=:user_id AND CASE WHEN `receiver`=:user_id THEN `sender`=`user_id` END WHERE `user_id`=:followID');

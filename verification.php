@@ -22,7 +22,6 @@ require_once "backend/shared/verify_handlers.php";
           <?php echo $user->email; ?> to verify your account.</h2>
       </div>
       <?php } ?>
-
     </div>
 
   </div>

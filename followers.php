@@ -23,7 +23,7 @@ if(is_get_request()){
     }
 }
 $user=$loadFromUser->userData($user_id);
-// $notificationCount=$loadFromMessage->notificationCount($user_id);
+$notificationCount=$loadFromMessage->notificationCount($user_id);
 $profileData=$loadFromUser->userData($profileId);
 $pageTitle='People followed by '.$profileData->firstName.' '.$profileData->lastName.'(@'.$profileData->username.') / Twitter';
 ?>
@@ -62,7 +62,7 @@ $pageTitle='People followed by '.$profileData->firstName.' '.$profileData->lastN
   <aside role="Complementary">Aside</aside>
 </main>
 </section>
-<!-- <script src="<?php //echo url_for("frontend/assets/js/notify.js"); ?>"></script> -->
+<script src="<?php echo url_for("frontend/assets/js/notify.js"); ?>"></script>
 <script src="<?php echo url_for("frontend/assets/js/follow.js"); ?>"></script>
 <script src="<?php echo url_for("frontend/assets/js/delete.js"); ?>"></script>
 <script src="<?php echo url_for("frontend/assets/js/hashtag.js"); ?>"></script>

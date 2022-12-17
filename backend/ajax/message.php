@@ -8,9 +8,9 @@ if(is_post_request()){
          $otherid=h($_POST['otheridForAjax']);
          $msg=FormSanitizer::formSanitizerString($_POST['msg']);
          $lastInsetedId=$loadFromUser->create("messages",array("message"=>$msg,"messageFrom"=>$userid,"messageTo"=>$otherid,"messageOn"=>date("Y-m-d H:i:s")));
-        //  if($userid != $otherid){
-        //     $loadFromUser->create('notification',array('notificationFor'=>$otherid,'notificationFrom'=>$userid,'target'=>$lastInsetedId,"type"=>"message","status"=>"0","notificationCount"=>"0","notificationOn"=>date('Y-m-d H:i:s')));
-        //  }
+         if($userid != $otherid){
+            $loadFromUser->create('notification',array('notificationFor'=>$otherid,'notificationFrom'=>$userid,'target'=>$lastInsetedId,"type"=>"message","status"=>"0","notificationCount"=>"0","notificationOn"=>date('Y-m-d H:i:s')));
+         }
          $msgData=$loadFromMessage->messageData($otherid,$userid);
           if(!empty($msgData)){
                echo '<div class="past-data-count" datacount="'.count($msgData).'"></div>';

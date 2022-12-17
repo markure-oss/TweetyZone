@@ -9,7 +9,7 @@
       redirect_to(url_for("index"));
   }
   $user=$loadFromUser->userData($user_id);
-// $notificationCount=$loadFromMessage->notificationCount($user_id);
+$notificationCount=$loadFromMessage->notificationCount($user_id);
   $pageTitle='Home | Twitter';
 ?>
 <?php require_once 'backend/shared/header.php'; ?>
@@ -135,14 +135,14 @@
             <h1 aria-level="1" role="heading">Trends for you</h1>
           </div>
           <div class="trends-body" aria-label="Timeline: Trending now">
-            <?php //$loadFromTweet->trends(); ?>
+            <?php $loadFromTweet->trends(); ?>
           </div>
         </div>
 
       </section>
       <div class="follow">
         <h3 class="follow-heading">Who to follow</h3>
-        <?php //$loadFromFollow->whoToFollow($user_id,$user_id); ?>
+        <?php $loadFromFollow->whoToFollow($user_id,$user_id); ?>
         <!-- -->
 
         <footer class="follow-footer">
@@ -161,7 +161,7 @@
 
 </section>
 <script src="<?php echo url_for("frontend/assets/js/liveSearch.js"); ?>"></script>
-<!-- <script src="<?php //echo url_for("frontend/assets/js/notify.js"); ?>"></script> -->
+<script src="<?php echo url_for("frontend/assets/js/notify.js"); ?>"></script>
 <script src="<?php echo url_for("frontend/assets/js/follow.js"); ?>"></script>
 <script src="<?php echo url_for("frontend/assets/js/delete.js"); ?>"></script>
 <script src="<?php echo url_for("frontend/assets/js/hashtag.js"); ?>"></script>

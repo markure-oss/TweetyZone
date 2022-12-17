@@ -10,7 +10,7 @@
       if(!empty($hashtag)){
           $loadFromTweet->addTrend($text,$lastId,$userid);
       }
-      // $loadFromTweet->addMention($text,$lastId,$userid);
+      $loadFromTweet->addMention($text,$lastId,$userid);
       $loadFromTweet->tweets($userid,10);
     }
   }

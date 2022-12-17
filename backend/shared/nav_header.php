@@ -41,15 +41,15 @@
         <h3>Explore</h3>
       </a>
       <a href="<?php echo url_for("i/notification"); ?>" class="link global-nav__primary-link-notif">
-        <?php //if(empty(count((array)$notificationCount))) { ?>
+        <?php if(empty(count((array)$notificationCount))) { ?>
         <span class="notification-badge">
           <span class="notification-badge--count"></span>
         </span>
-        <?php //}else{ ?>
-        <!-- <span class="notification-badge notification-badge-show">
-          <span class="notification-badge--count"><?php //echo count((array)$notificationCount); ?></span>
-        </span> -->
-        <?php //} ?>
+        <?php }else{ ?>
+        <span class="notification-badge notification-badge-show">
+          <span class="notification-badge--count"><?php echo count((array)$notificationCount); ?></span>
+        </span>
+        <?php } ?>
         <?php if(strpos($_SERVER['REQUEST_URI'],'i/notification')){  ?>
         <svg xmlns="http://www.w3.org/2000/svg" class="home-link" viewBox="0 0 24 24">
           <g>

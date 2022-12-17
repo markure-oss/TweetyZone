@@ -10,7 +10,7 @@ if(is_post_request()){
          $tweetBy=h($_POST['postedby']);
 
          $post=$loadFromTweet->getPopupTweet($tweetId,$tweetBy);
-        //  $commentpost=$loadFromTweet->getModalComment($tweetId,$tweetBy);
+         $commentpost=$loadFromTweet->getModalComment($tweetId,$tweetBy);
          $user=$loadFromUser->userData($userId);
          if(!empty($post)){
          ?>

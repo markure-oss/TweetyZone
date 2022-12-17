@@ -3,7 +3,7 @@ $(function () {
 
     function notificationUpdate(userId) {
         if (userId != undefined) {
-            $.post("http://localhost/tweety/backend/ajax/notify.php", { notificationUpdate: userId }, function (data) {
+            $.post("http://127.0.0.1:8888/tweety/backend/ajax/notify.php", { notificationUpdate: userId }, function (data) {
                 if (data.trim() == '0') {
                     $(".notification-badge--count").empty();
                     $(".notification-badge-show").css({ "opacity": "0 !important" });
@@ -24,7 +24,7 @@ $(function () {
 
     $(document).on("click", ".global-nav__primary-link-notif", function () {
         if (userid != undefined) {
-            $.post("http://localhost/tweety/backend/ajax/notify.php", { notify: userid }, function (data) {
+            $.post("http://127.0.0.1:8888/tweety/backend/ajax/notify.php", { notify: userid }, function (data) {
 
             });
         }

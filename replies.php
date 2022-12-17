@@ -22,7 +22,7 @@
     }
 }
 $user=$loadFromUser->userData($user_id);
-// $notificationCount=$loadFromMessage->notificationCount($user_id);
+$notificationCount=$loadFromMessage->notificationCount($user_id);
 $profileData=$loadFromUser->userData($profileId);
 $date_joined=strtotime($profileData->signUpDate);
 $pageTitle='Tweets with replies by '.$profileData->firstName.' '.$profileData->lastName.'(@'.$profileData->username.') / Twitter';
@@ -101,7 +101,7 @@ $pageTitle='Tweets with replies by '.$profileData->firstName.' '.$profileData->l
       </section>
       <div class="follow">
         <h3 class="follow-heading">Who to follow</h3>
-        <?php //$loadFromFollow->whoToFollow($user_id,$user_id); ?>
+        <?php $loadFromFollow->whoToFollow($user_id,$user_id); ?>
         <!-- -->
 
         <footer class="follow-footer">
@@ -119,7 +119,7 @@ $pageTitle='Tweets with replies by '.$profileData->firstName.' '.$profileData->l
 </main>
 </section>
 <script src="<?php echo url_for("frontend/assets/js/profile.js"); ?>"></script>
-<!-- <script src="<?php //echo url_for("frontend/assets/js/notify.js"); ?>"></script> -->
+<script src="<?php echo url_for("frontend/assets/js/notify.js"); ?>"></script>
 <script src="<?php echo url_for("frontend/assets/js/follow.js"); ?>"></script>
 <script src="<?php echo url_for("frontend/assets/js/delete.js"); ?>"></script>
 <script src="<?php echo url_for("frontend/assets/js/hashtag.js"); ?>"></script>

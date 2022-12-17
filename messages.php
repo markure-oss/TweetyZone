@@ -11,7 +11,7 @@ if(Login::isLoggedIn()){
 }
 
 $user=$loadFromUser->userData($user_id);
-// $notificationCount=$loadFromMessage->notificationCount($user_id);
+$notificationCount=$loadFromMessage->notificationCount($user_id);
 
 if(isset($_GET['message'])){
    $otheruserid=h($_GET['message']);
@@ -237,7 +237,7 @@ $(function() {
 
 })
 </script>
-<!-- <script src="<?php //echo url_for("frontend/assets/js/notify.js"); ?>"></script> -->
+<script src="<?php echo url_for("frontend/assets/js/notify.js"); ?>"></script>
 <script src="<?php echo url_for("frontend/assets/js/delete.js"); ?>"></script>
 <script src="<?php echo url_for("frontend/assets/js/search.js"); ?>"></script>
 <script src="<?php echo url_for("frontend/assets/js/msgModal.js"); ?>"></script>

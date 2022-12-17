@@ -41,31 +41,31 @@ if(is_post_request()){
                 }
             }
         }
-    // }
+    }
 
-    // if(isset($_POST['liveSearch']) && !empty($_POST['liveSearch'])){
-    //     $search=FormSanitizer::formSanitizerString($_POST['liveSearch']);
+    if(isset($_POST['liveSearch']) && !empty($_POST['liveSearch'])){
+        $search=FormSanitizer::formSanitizerString($_POST['liveSearch']);
 
-    //     $result=$loadFromUser->search($search);
-    //     echo '<ul id="suggestion">';
-    //     if(!empty($result)){
-    //         foreach($result as $user){
-    //            echo '<li>
-    //                 <a href="'.url_for($user->username).'">
-    //                         <div id="image-wrapper-suggest">
-    //                             <img src="'.url_for($user->profileImage).'" alt="'.$user->firstName.' '.$user->lastName.'">
-    //                         </div>
-    //                         <div class="suggest-name">
-    //                             <h2>'.$user->firstName.' '.$user->lastName.'</h2>
-    //                             <h4>@'.$user->username.'</h4>
-    //                         </div>
-    //                 </a>
-    //                 </li>';
-    //         }
-    //     }else{
-    //         echo '<div class="no-result">No Results Found</div>';
-    //     }
-    //     echo '</ul>';
+        $result=$loadFromUser->search($search);
+        echo '<ul id="suggestion">';
+        if(!empty($result)){
+            foreach($result as $user){
+               echo '<li>
+                    <a href="'.url_for($user->username).'">
+                            <div id="image-wrapper-suggest">
+                                <img src="'.url_for($user->profileImage).'" alt="'.$user->firstName.' '.$user->lastName.'">
+                            </div>
+                            <div class="suggest-name">
+                                <h2>'.$user->firstName.' '.$user->lastName.'</h2>
+                                <h4>@'.$user->username.'</h4>
+                            </div>
+                    </a>
+                    </li>';
+            }
+        }else{
+            echo '<div class="no-result">No Results Found</div>';
+        }
+        echo '</ul>';
 
 
     }

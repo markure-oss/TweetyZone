@@ -144,7 +144,7 @@ class Tweet{
             $result=array_values($matches[1]);
         }
 
-        $sql="INSERT INTO `trends` (`hashtag`,`tweetID`,`user_id`,`createdOn`) VALUES (:hashtag,:tweetid,:userId,:dateOn)";
+        $sql="INSERT INTO `trends` (`hashtag`,`tweet_id`,`user_id`,`createdOn`) VALUES (:hashtag,:tweetid,:userId,:dateOn)";
 
         foreach($result as $trend){
             if($stmt=$this->pdo->prepare($sql)){
@@ -197,11 +197,17 @@ class Tweet{
         // echo $tweetBy;
         if($this->wasLikedBy($likedBy, $tweetId)){
             // liked
+            if($likedBy != $tweetBy){
+                $this->user->delete('notification',array('notificationFor'=>$tweetBy,'notificationFrom'=>$likedBy,'target'=>$tweetId,"type"=>"like"));
+            }
             $this->user->delete('likes',array('likeBy'=>$likedBy,'likeOn'=>$tweetId));
             $result = array("likes"=>-1);
             return json_encode($result);
         }else {
             //not liked
+            if($likedBy != $tweetBy){
+                $this->user->create('notification',array('notificationFor'=>$tweetBy,'notificationFrom'=>$likedBy,'target'=>$tweetId,"type"=>"like","status"=>"0","notificationCount"=>"0","notificationOn"=>date('Y-m-d H:i:s')));
+            }
             $this->user->create('likes',array('likeBy'=>$likedBy,'likeOn'=>$tweetId));
             $result = array("likes"=>1);
             return json_encode($result);
@@ -219,6 +225,14 @@ class Tweet{
     public function getPopupTweet($tweetId,$tweetBy){
         $stmt=$this->pdo->prepare("SELECT * FROM `tweets` LEFT JOIN `users` ON users.user_id=tweets.tweetBy WHERE tweets.tweetID=:tweetId AND tweets.tweetBy=:tweetby");
         $stmt->bindParam(":tweetId",$tweetId,PDO::PARAM_INT);
+        $stmt->bindParam(":tweetby",$tweetBy,PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+
+    public function getModalComment($tweetId,$tweetBy){
+        $stmt=$this->pdo->prepare("SELECT * FROM `comment` LEFT JOIN `users` ON users.user_id=comment.commentBy WHERE comment.commentID=:tweetid AND comment.commentBy=:tweetby");
+        $stmt->bindParam(":tweetid",$tweetId,PDO::PARAM_INT);
         $stmt->bindParam(":tweetby",$tweetBy,PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_OBJ);
@@ -245,15 +259,24 @@ class Tweet{
         }
     }
 
-    public function retweetCount($user_id, $tweetId, $comment){
-        if($this->wasRetweetBy($user_id, $tweetId)){
+
+    public function retweetCount($user_id,$tweetId,$comment,$tweetBy){
+        if($this->wasRetweetBy($user_id,$tweetId)){
+            if($user_id != $tweetBy){
+                $this->user->delete('notification',array('notificationFor'=>$tweetBy,'notificationFrom'=>$user_id,'target'=>$tweetId,"type"=>"retweet"));
+            }
             $this->user->delete('retweet',array('retweetBy'=>$user_id,'retweetFrom'=>$tweetId));
-            $result = array("retweet"=>-1);
+            $result=array("retweet"=>-1);
             return json_encode($result);
-        }else {
+        }else{
+            if($user_id != $tweetBy){
+                // echo 'User_id:'.$user_id."+ tweetBy:".$tweetBy;
+                $this->user->create('notification',array('notificationFor'=>$tweetBy,'notificationFrom'=>$user_id,'target'=>$tweetId,"type"=>"retweet","status"=>"0","notificationCount"=>"0","notificationOn"=>date('Y-m-d H:i:s')));
+            }
             $this->user->create('retweet',array('retweetBy'=>$user_id,'retweetFrom'=>$tweetId));
-            $result = array("retweet"=>1);
-            return json_encode($result);
+            $result=array("retweet"=>1);
+             return json_encode($result);
+            //not liked
         }
     }
 
@@ -287,16 +310,16 @@ class Tweet{
 
     public function comment($commentBy,$commentOn,$comment,$postedBy){
         if($this->wasCommentBy($commentBy,$commentOn)){
-            // if($commentBy != $postedBy){
-            //     $this->user->delete('notification',array('notificationFor'=>$postedBy,'notificationFrom'=>$commentBy,'target'=>$commentOn,"type"=>"comment"));
-            // }
+            if($commentBy != $postedBy){
+                $this->user->delete('notification',array('notificationFor'=>$postedBy,'notificationFrom'=>$commentBy,'target'=>$commentOn,"type"=>"comment"));
+            }
             $this->user->delete('comment',array('commentBy'=>$commentBy,'commentOn'=>$commentOn));
             $result=array("comment"=>-1);
             return json_encode($result);
         }else{
-            // if($commentBy != $postedBy){
-            //     $this->user->create('notification',array('notificationFor'=>$postedBy,'notificationFrom'=>$commentBy,'target'=>$commentOn,"type"=>"comment","status"=>"0","notificationCount"=>"0","notificationOn"=>date('Y-m-d H:i:s')));
-            // }
+            if($commentBy != $postedBy){
+                $this->user->create('notification',array('notificationFor'=>$postedBy,'notificationFrom'=>$commentBy,'target'=>$commentOn,"type"=>"comment","status"=>"0","notificationCount"=>"0","notificationOn"=>date('Y-m-d H:i:s')));
+            }
             $this->user->create('comment',array('commentBy'=>$commentBy,'commentOn'=>$commentOn,'comment'=>$comment,'commentAt'=>date('Y-m-d H:i:s')));
             $result=array("comment"=>1);
             return json_encode($result);
@@ -383,11 +406,9 @@ class Tweet{
                         </span>' : '' ).'
                      </div>
                      <div class="post-body">
-                        <div>'.$this->getTweetLinks($tweet->status).'</div>
-                            '.((!empty($tweet->tweetImage)) ? '<div class="postContentContainer_postImage">
-                            <img src="'.url_for($tweet->tweetImage).'"/>
-                        </div>' : '').'
-                    </div>
+                         <div>'.$this->getTweetLinks($tweet->comment).'</div>
+                         
+                     </div>
                      '.$controls.'
                  </div>
              </div>
@@ -396,7 +417,7 @@ class Tweet{
     }
 
     public function getHashtagTweets($hashtag,$user_id){
-        $stmt=$this->pdo->prepare("SELECT * FROM users u LEFT JOIN tweets p ON p.tweetBy=u.user_id INNER JOIN trends t ON p.tweetID=t.tweetId WHERE hashtag=:hashtag ORDER BY postedOn DESC");
+        $stmt=$this->pdo->prepare("SELECT * FROM users u LEFT JOIN tweets p ON p.tweetBy=u.user_id INNER JOIN trends t ON p.tweetID=t.tweet_id WHERE hashtag=:hashtag ORDER BY postedOn DESC");
         $stmt->bindParam(":hashtag",$hashtag,PDO::PARAM_STR);
         $stmt->execute();
         $tweets=$stmt->fetchAll(PDO::FETCH_OBJ);
@@ -447,6 +468,21 @@ class Tweet{
                  </div>
              </div>
          </article>';
+        }
+    }
+
+    public function trends(){
+        $stmt=$this->pdo->prepare("SELECT *,COUNT(`tweetID`) AS `tweetsCount` FROM trends t LEFT JOIN tweets p ON p.tweetID=t.tweet_id AND status LIKE CONCAT('%#',`hashtag`,'%') GROUP BY `hashtag` ORDER BY `tweetsCount` DESC LIMIT 3");
+        $stmt->execute();
+        $trends=$stmt->fetchALL(PDO::FETCH_OBJ);
+        // var_dump($trends);
+        if(!empty($trends)){
+            foreach($trends as $trend){
+                echo '<div class="trends-content" data-trend="'.$trend->trendID.'">
+                <h2 aria-level="2" role="heading">#'.$trend->hashtag.'</h2>
+                <div class="trends-text"><span class="trends-count">'.$trend->tweetsCount.'</span> Tweets</div>
+             </div>';
+            }
         }
     }
     
