@@ -57,7 +57,7 @@ class Verify{
             $mail->From="moilelezz1234@gmail.com";
             $mail->FromName="TWITTER";
             $mail->addReplyTo="no-reply@gmail.com";
-            $mail->addAddress("moilelezz1234@gmail.com");
+            $mail->addAddress($email);
 
             $mail->Subject=$subject;
             $mail->Body=$message;
